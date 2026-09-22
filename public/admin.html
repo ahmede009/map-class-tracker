@@ -16,53 +16,66 @@
             --card-shadow: 0 4px 6px -4px rgba(0, 0, 0, 0.1);
         }
         
-        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--text-main); }
-        .header-title { text-align: center; font-size: 2rem; color: var(--ais-blue); margin-bottom: 20px; font-weight: 800; letter-spacing: -1px; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 20px 15px; color: var(--text-main); }
+        
+        /* Responsive Flexbox Header */
+        .header-wrapper { display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 1000px; margin: 0 auto 30px auto; position: relative; }
+        .header-logo { height: 50px; object-fit: contain; }
+        .header-title { text-align: center; font-size: 1.8rem; color: var(--ais-blue); margin: 0; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
         
         .grid { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 1000px; margin: auto; }
-        @media (min-width: 768px) { .grid { grid-template-columns: 1fr 1fr; } }
         
-        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0; margin-bottom: 20px; }
-        h2 { margin-top: 0; font-size: 1.2rem; font-weight: 700; color: var(--text-main); border-bottom: 3px solid var(--ais-yellow); padding-bottom: 8px; display: inline-block; margin-bottom: 20px; }
+        .card { background: white; padding: 20px; border-radius: 16px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        h2 { margin-top: 0; font-size: 1.2rem; font-weight: 700; color: var(--text-main); border-bottom: 3px solid var(--ais-yellow); padding-bottom: 8px; display: inline-block; margin-bottom: 15px; }
         
-        .class-row { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 12px; transition: 0.2s ease; }
-        .class-row:hover { border-color: #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        /* Mobile-First Rows */
+        .class-row { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 12px; transition: 0.2s ease; }
         .class-row strong { font-size: 1.1rem; }
         
-        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; width: 100%; }
         
-        button { background: #f1f5f9; color: var(--text-main); border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; font-family: 'Inter'; transition: all 0.2s ease; }
-        button:hover { background: #e2e8f0; transform: translateY(-1px); }
+        button { background: #f1f5f9; color: var(--text-main); border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; font-family: 'Inter'; transition: all 0.2s ease; flex: 1; text-align: center; }
         
         .btn-qr, .btn-primary { background: var(--ais-blue); color: white; }
-        .btn-qr:hover, .btn-primary:hover { background: #003d73; }
         
-        .upload-zone { border: 2px dashed #cbd5e1; padding: 25px; text-align: center; border-radius: 12px; background: #f8fafc; transition: 0.2s; }
-        .upload-zone:hover { border-color: var(--ais-blue); background: #f1f5f9; }
-        .upload-zone input { margin-top: 15px; margin-bottom: 15px; font-family: 'Inter'; }
+        .upload-zone { border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 12px; background: #f8fafc; }
+        .upload-zone input { margin: 15px 0; font-family: 'Inter'; max-width: 100%; }
         
-        .rank-row { display: flex; justify-content: space-between; align-items: center; padding: 14px; margin-bottom: 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; position: relative; overflow: hidden; }
+        .rank-row { display: flex; align-items: center; padding: 14px; margin-bottom: 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; position: relative; overflow: hidden; }
         .rank-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--ais-yellow); }
-        .rank-number { font-weight: 800; color: var(--text-muted); width: 30px; }
+        .rank-number { font-weight: 800; color: var(--text-muted); width: 35px; }
         .rank-class { font-weight: 700; flex: 1; }
-        .rank-score { font-weight: 800; color: var(--ais-blue); background: #f1f5f9; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; }
+        .rank-score { font-weight: 800; color: var(--ais-blue); background: #f1f5f9; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; }
         
         .gold-medal::before { background: #fbbf24; }
         .silver-medal::before { background: #94a3b8; }
         .bronze-medal::before { background: #b45309; }
-        .header-wrapper { position: relative; max-width: 1000px; margin: 0 auto 30px auto; padding-top: 10px; text-align: center; }
-        .header-logo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 55px; }
+
+        /* Desktop Layout Snap */
+        @media (min-width: 768px) {
+            body { padding: 40px 20px; }
+            .header-wrapper { flex-direction: row; justify-content: center; }
+            .header-logo { position: absolute; left: 0; height: 60px; }
+            .header-title { font-size: 2.2rem; }
+            .grid { grid-template-columns: 1fr 1fr; }
+            .class-row { flex-direction: row; justify-content: space-between; align-items: center; }
+            .btn-group { width: auto; }
+            button { flex: none; padding: 8px 14px; }
+            .card { padding: 25px; }
+            .rank-score { padding: 4px 12px; font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
     <div class="header-wrapper">
-        <img src="/logo.png" alt="School Logo" class="header-logo">
-        <h1 class="header-title" style="margin-bottom: 0;">Admin Control Center</h1>
+        <img src="/logo.png" alt="School Logo" class="header-logo" onerror="this.style.display='none'">
+        <h1 class="header-title">Admin Control Center</h1>
     </div>
+    
     <div class="grid" style="max-width: 1000px; margin: 0 auto 20px auto; grid-template-columns: 1fr;">
         <div class="card">
             <h2>Import MAP Scores (CSV)</h2>
-            <p style="font-size: 0.95rem; color: #64748b; margin-top: -10px; margin-bottom: 20px;">Required Headers: <strong>ClassID, Grade, Subject, Term, RITScore</strong></p>
+            <p style="font-size: 0.9rem; color: #64748b; margin-top: -10px; margin-bottom: 20px;">Required: <strong>ClassID, Grade, Subject, Term, RITScore</strong></p>
             <div class="upload-zone">
                 <input type="file" id="csvFile" accept=".csv" />
                 <br>
@@ -176,7 +189,7 @@
                     
                     if (res.ok) {
                         alert('Scores updated successfully!');
-                        initAdmin(); // Refresh data
+                        initAdmin(); 
                     } else {
                         alert('Upload failed. Check server logs.');
                     }
