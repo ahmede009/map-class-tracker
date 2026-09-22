@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class MAP Performance</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --ais-blue: #00529b; --ais-yellow: #ffc72c; --bg: #f4f7f6; --text-main: #333333; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; color: var(--text-main); }
+        .header { background: var(--ais-blue); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--ais-yellow); }
+        .header h1 { margin: 0; font-size: 1.8rem; }
+        .container { max-width: 800px; margin: 20px auto; padding: 0 20px; }
+        
+        /* Subject Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn { background: #ddd; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; white-space: nowrap; transition: 0.2s; }
+        .tab-btn.active { background: var(--ais-blue); color: white; }
+        
+        /* Term Sub-Filters */
+        .term-tabs { margin-bottom: 25px; gap: 8px; }
+        .term-btn { background: transparent; border: 2px solid #ccc; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; font-weight: 600; color: #666; transition: 0.2s; }
+        .term-btn.active { border-color: var(--ais-yellow); background: rgba(255, 199, 44, 0.1); color: var(--text-main); }
+        
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-box { background: var(--bg); padding: 15px; border-left: 5px solid var(--ais-yellow); border-radius: 4px; }
+        .stat-label { font-size: 0.85rem; color: #666; text-transform: uppercase; font-weight: bold; }
+        .stat-value { font-size: 1.8rem; font-weight: bold; color: var(--ais-blue); margin-top: 5px; }
+        .stat-subtext { font-size: 0.85rem; color: #888; margin-top: 4px; font-weight: 500; }
+        
+        .positive { color: #2e7d32; }
+        .negative { color: #c62828; }
+        .neutral { color: #666; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 id="className">Loading...</h1>
+    </div>
+    <div class="container">
+        <div class="tabs" id="subjectTabs"></div>
+        <div class="tabs term-tabs" id="termTabs"></div>
+        <div id="content"></div>
+    </div>
+
+    <script>
+        const uuid = new URLSearchParams(window.location.search).get('id');
+        let classData = null;
+        let currentSubjectIndex = 0;
+        let currentTerm = 'All';
+        let chartInstance = null;
+
+        async function init() {
+            if (!uuid) return document.getElementById('content').innerHTML = 'Invalid Link.';
+            try {
+                const res = await fetch(`/api/classes/${uuid}`);
+                if (!res.ok) throw new Error('Not Found');
+                classData = await res.json();
+                
+                document.getElementById('className').textContent = `Class ${classData.classId}`;
+                renderSubjectTabs();
+                if (classData.subjects.length > 0) updateView(0, 'All');
+            } catch (err) {
+                document.getElementById('content').innerHTML = '<h3 style="color:red; text-align:center;">Secure link expired or invalid.</h3>';
+            }
+        }
+
+        function renderSubjectTabs() {
+            const html = classData.subjects.map((sub, i) => 
+                `<button class="tab-btn ${i === currentSubjectIndex ? 'active' : ''}" onclick="updateView(${i}, 'All')">${sub.name}</button>`
+            ).join('');
+            document.getElementById('subjectTabs').innerHTML = html;
+        }
+
+        function renderTermTabs(subject) {
+            let html = `<button class="term-btn ${currentTerm === 'All' ? 'active' : ''}" onclick="updateView(${currentSubjectIndex}, 'All')">All Terms</button>`;
+            
+            subject.mapScores.forEach(score => {
+                const isActive = currentTerm === score.term ? 'active' : '';
+                html += `<button class="term-btn ${isActive}" onclick="updateView(${currentSubjectIndex}, '${score.term}')">${score.term}</button>`;
+            });
+            document.getElementById('termTabs').innerHTML = html;
+        }
+
+        function updateView(subjectIndex, term) {
+            currentSubjectIndex = subjectIndex;
+            currentTerm = term;
+            
+            const subject = classData.subjects[currentSubjectIndex];
+            
+            renderSubjectTabs();
+            renderTermTabs(subject);
+            
+            let statsHtml = '';
+            let showChart = false;
+            let chartData = [];
+
+            if (currentTerm === 'All') {
+                const latest = subject.mapScores[subject.mapScores.length - 1];
+                let growthHtml = '';
+                
+                if (subject.mapScores.length > 1) {
+                    const first = subject.mapScores[0];
+                    const growth = latest.ritScore - first.ritScore;
+                    const sign = growth > 0 ? '+' : '';
+                    const colorClass = growth >= 0 ? 'positive' : 'negative';
+                    growthHtml = `<div class="stat-value ${colorClass}">${sign}${growth} pts</div>
+                                  <div class="stat-subtext">Since ${first.term}</div>`;
+                } else {
+                    growthHtml = `<div class="stat-value neutral">N/A</div>
+                                  <div class="stat-subtext">Cannot calculate growth yet.</div>`;
+                }
+
+                statsHtml = `
+                    <div class="stat-box">
+                        <div class="stat-label">Latest Class Average (${latest.term})</div>
+                        <div class="stat-value">${latest.ritScore}</div>
+                        <div class="stat-subtext">Target Norm: ${latest.nationalNorm}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Total Class Growth</div>
+                        ${growthHtml}
+                    </div>
+                `;
+                
+                showChart = true;
+                chartData = subject.mapScores;
+
+            } else {
+                const termData = subject.mapScores.find(s => s.term === currentTerm);
+                const diff = termData.ritScore - termData.nationalNorm;
+                const sign = diff > 0 ? '+' : '';
+                const colorClass = diff >= 0 ? 'positive' : 'negative';
+                const statusText = diff >= 0 ? 'Above Target' : 'Below Target';
+
+                statsHtml = `
+                    <div class="stat-box">
+                        <div class="stat-label">${termData.term} Class Average</div>
+                        <div class="stat-value">${termData.ritScore}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Vs. Target Norm (${termData.nationalNorm})</div>
+                        <div class="stat-value ${colorClass}">${sign}${diff}</div>
+                        <div class="stat-subtext ${colorClass}">${statusText}</div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('content').innerHTML = `
+                <div class="stats-grid">${statsHtml}</div>
+                ${showChart ? `<div class="card"><h3 style="margin-top:0; color:var(--ais-blue);">Class Average Trajectory</h3><canvas id="mapChart"></canvas></div>` : ''}
+            `;
+
+            if (chartInstance) chartInstance.destroy();
+            
+            if (showChart) {
+                chartInstance = new Chart(document.getElementById('mapChart').getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: chartData.map(s => s.term),
+                        datasets: [
+                            { 
+                                label: 'Class Average', 
+                                data: chartData.map(s => s.ritScore), 
+                                borderColor: '#00529b', 
+                                backgroundColor: '#00529b',
+                                borderWidth: 3,
+                                tension: 0.1
+                            },
+                            { 
+                                label: 'Target Norm', 
+                                data: chartData.map(s => s.nationalNorm), 
+                                borderColor: '#ffc72c', 
+                                borderDash: [5, 5],
+                                borderWidth: 2,
+                                pointRadius: 0
+                            }
+                        ]
+                    },
+                    options: { responsive: true }
+                });
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

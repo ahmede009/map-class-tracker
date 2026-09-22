@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Control Center</title>
+    <style>
+        :root { --ais-blue: #00529b; --ais-yellow: #ffc72c; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1000px; margin: auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { color: var(--ais-blue); margin-top: 0; border-bottom: 2px solid var(--ais-yellow); padding-bottom: 10px; }
+        .class-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        button { background: var(--ais-blue); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #003d73; }
+        .rank-row { padding: 8px; margin: 5px 0; background: var(--bg); border-left: 4px solid var(--ais-yellow); font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: var(--ais-blue);">Admin Control Center</h1>
+    <div class="grid">
+        <div class="card">
+            <h2>Secure Class Links</h2>
+            <div id="linksContainer">Loading...</div>
+        </div>
+        <div class="card">
+            <h2>School Leaderboard (Latest Math RIT)</h2>
+            <div id="leaderboardContainer">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        async function initAdmin() {
+            const res = await fetch('/api/admin/data');
+            const classes = await res.json();
+            
+            // Render Links
+            let linksHtml = '';
+            classes.forEach(c => {
+                const url = `${window.location.origin}/class.html?id=${c.uuid}`;
+                linksHtml += `
+                    <div class="class-row">
+                        <strong>${c.classId}</strong>
+                        <button onclick="navigator.clipboard.writeText('${url}'); alert('Copied!')">Copy Link</button>
+                    </div>`;
+            });
+            document.getElementById('linksContainer').innerHTML = linksHtml;
+
+            // Render Leaderboard (Math)
+            const mathRankings = classes.map(c => {
+                const mathSub = c.subjects.find(s => s.name === 'Math');
+                const latestScore = mathSub ? mathSub.mapScores[mathSub.mapScores.length - 1].ritScore : 0;
+                return { id: c.classId, score: latestScore };
+            }).sort((a, b) => b.score - a.score);
+
+            let rankHtml = '';
+            mathRankings.forEach((r, i) => {
+                rankHtml += `<div class="rank-row">#${i + 1} - Class ${r.id} (${r.score} RIT)</div>`;
+            });
+            document.getElementById('leaderboardContainer').innerHTML = rankHtml;
+        }
+        initAdmin();
+    </script>
+</body>
+</html>

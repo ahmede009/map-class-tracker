@@ -1,0 +1,40 @@
+[
+    {
+        "classId": "10B2",
+        "subjects": [
+            {
+                "name": "Math",
+                "mapScores": [
+                    { "term": "Fall", "ritScore": 228, "nationalNorm": 230 }
+                   
+                ]
+            },
+            {
+                "name": "Reading",
+                "mapScores": [
+                    { "term": "Fall", "ritScore": 218, "nationalNorm": 220 },
+                    { "term": "Winter", "ritScore": 225, "nationalNorm": 222 }
+                ]
+            },
+            {
+                "name": "Math",
+                "mapScores": [
+                    { "term": "Fall", "ritScore": 218, "nationalNorm": 220 },
+                    { "term": "Winter", "ritScore": 225, "nationalNorm": 222 }
+                ]
+            }
+        ]
+    },
+    {
+        "classId": "10B1",
+        "subjects": [
+            {
+                "name": "Math",
+                "mapScores": [
+                    { "term": "Fall", "ritScore": 230, "nationalNorm": 230 },
+                    { "term": "Winter", "ritScore": 240, "nationalNorm": 232 }
+                ]
+            }
+        ]
+    }
+]
