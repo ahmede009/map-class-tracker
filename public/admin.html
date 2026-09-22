@@ -2,34 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Control Center</title>
-    <!-- Lightweight QR Code Library -->
+    <title>Admin Control Center | MAP Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --ais-blue: #00529b; --ais-yellow: #ffc72c; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1000px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { color: var(--ais-blue); margin-top: 0; border-bottom: 2px solid var(--ais-yellow); padding-bottom: 10px; }
-        .class-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .btn-group { display: flex; gap: 8px; }
-        button { background: var(--ais-blue); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 500; }
-        button:hover { background: #003d73; }
-        .btn-qr { background: #333; }
-        .btn-qr:hover { background: #111; }
-        .rank-row { padding: 8px; margin: 5px 0; background: var(--bg); border-left: 4px solid var(--ais-yellow); font-weight: bold; }
+        :root { 
+            --ais-blue: #00529b; 
+            --ais-yellow: #ffc72c; 
+            --bg: #f8fafc; 
+            --text-main: #0f172a; 
+            --text-muted: #64748b;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        }
+        
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 40px 20px; color: var(--text-main); }
+        
+        .header-title { text-align: center; font-size: 2.5rem; font-weight: 800; color: var(--ais-blue); margin-bottom: 40px; letter-spacing: -1px; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; margin: auto; }
+        
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: var(--card-shadow); border: 1px solid #f1f5f9; }
+        
+        h2 { margin-top: 0; font-size: 1.2rem; font-weight: 700; color: var(--text-main); border-bottom: 3px solid var(--ais-yellow); padding-bottom: 12px; margin-bottom: 24px; display: inline-block; }
+        
+        .class-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 16px; background: #ffffff; border: 1px solid #e2e8f0; 
+            border-radius: 12px; margin-bottom: 12px; transition: 0.2s ease;
+        }
+        .class-row:hover { border-color: #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .class-row strong { font-size: 1.1rem; }
+        
+        .btn-group { display: flex; gap: 10px; }
+        
+        button { 
+            background: #f1f5f9; color: var(--text-main); border: none; 
+            padding: 8px 16px; border-radius: 8px; cursor: pointer; 
+            font-weight: 600; font-size: 0.85rem; font-family: 'Inter';
+            transition: all 0.2s ease;
+        }
+        button:hover { background: #e2e8f0; transform: translateY(-1px); }
+        
+        .btn-qr { background: var(--ais-blue); color: white; }
+        .btn-qr:hover { background: #003d73; }
+        
+        .rank-row { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px; margin-bottom: 12px; background: #ffffff; 
+            border: 1px solid #e2e8f0; border-radius: 12px; 
+            position: relative; overflow: hidden;
+        }
+        
+        .rank-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--ais-yellow); }
+        
+        .rank-number { font-weight: 800; color: var(--text-muted); width: 30px; }
+        .rank-class { font-weight: 700; flex: 1; }
+        .rank-score { font-weight: 800; color: var(--ais-blue); background: #f1f5f9; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; }
+        
+        .gold-medal::before { background: #fbbf24; }
+        .silver-medal::before { background: #94a3b8; }
+        .bronze-medal::before { background: #b45309; }
     </style>
 </head>
 <body>
-    <h1 style="text-align: center; color: var(--ais-blue);">Admin Control Center</h1>
+    <h1 class="header-title">Admin Control Center</h1>
     <div class="grid">
         <div class="card">
             <h2>Secure Class Links</h2>
-            <div id="linksContainer">Loading...</div>
+            <div id="linksContainer">Loading assets...</div>
         </div>
         <div class="card">
             <h2>School Leaderboard (Latest Math RIT)</h2>
-            <div id="leaderboardContainer">Loading...</div>
+            <div id="leaderboardContainer">Calculating rankings...</div>
         </div>
     </div>
 
@@ -46,7 +92,7 @@
                         <div class="class-row">
                             <strong>${c.classId}</strong>
                             <div class="btn-group">
-                                <button onclick="navigator.clipboard.writeText('${url}'); alert('Copied!')">Copy Link</button>
+                                <button onclick="navigator.clipboard.writeText('${url}'); alert('Link copied to clipboard!')">Copy Link</button>
                                 <button class="btn-qr" onclick="downloadQR('${url}', '${c.classId}')">Download QR</button>
                             </div>
                         </div>`;
@@ -55,33 +101,44 @@
 
                 const mathRankings = classes.map(c => {
                     const mathSub = c.subjects.find(s => s.name === 'Math');
-                    const latestScore = mathSub ? mathSub.mapScores[mathSub.mapScores.length - 1].ritScore : 0;
+                    const latestScore = mathSub && mathSub.mapScores.length > 0 
+                        ? mathSub.mapScores[mathSub.mapScores.length - 1].ritScore : 0;
                     return { id: c.classId, score: latestScore };
                 }).sort((a, b) => b.score - a.score);
 
                 let rankHtml = '';
                 mathRankings.forEach((r, i) => {
-                    rankHtml += `<div class="rank-row">#${i + 1} - Class ${r.id} (${r.score} RIT)</div>`;
+                    let medalClass = '';
+                    if (i === 0) medalClass = 'gold-medal';
+                    else if (i === 1) medalClass = 'silver-medal';
+                    else if (i === 2) medalClass = 'bronze-medal';
+                    
+                    rankHtml += `
+                        <div class="rank-row ${medalClass}">
+                            <div class="rank-number">#${i + 1}</div>
+                            <div class="rank-class">Class ${r.id}</div>
+                            <div class="rank-score">${r.score} RIT</div>
+                        </div>`;
                 });
                 document.getElementById('leaderboardContainer').innerHTML = rankHtml;
             } catch (err) {
-                document.getElementById('linksContainer').innerHTML = '<span style="color:red">Failed to load data.</span>';
+                document.getElementById('linksContainer').innerHTML = '<span style="color:red; font-weight:600;">Failed to establish secure connection.</span>';
             }
         }
 
         async function downloadQR(url, classId) {
             try {
                 const dataUrl = await QRCode.toDataURL(url, { 
-                    width: 400,
+                    width: 500,
                     margin: 2,
-                    color: { dark: '#00529b', light: '#ffffff' } // Styled with AIS Blue
+                    color: { dark: '#0f172a', light: '#ffffff' }
                 });
                 const link = document.createElement('a');
-                link.download = `Class_${classId}_QR.png`;
+                link.download = `Class_${classId}_QR_Code.png`;
                 link.href = dataUrl;
                 link.click();
             } catch (err) {
-                alert('Failed to generate QR code.');
+                alert('Failed to generate QR code asset.');
             }
         }
 
