@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const mapScoreSchema = new mongoose.Schema({
     term: { type: String, required: true },
     ritScore: { type: Number, required: true },
-    nationalNorm: { type: Number, required: true }
+    nationalNorm: { type: Number, required: true } 
 });
 
 const subjectSchema = new mongoose.Schema({
@@ -13,7 +13,8 @@ const subjectSchema = new mongoose.Schema({
 });
 
 const classSchema = new mongoose.Schema({
-    classId: { type: String, required: true, unique: true }, 
+    classId: { type: String, required: true, unique: true },
+    gradeLevel: { type: Number, required: true }, 
     uuid: { type: String, default: () => crypto.randomUUID(), unique: true },
     subjects: [subjectSchema]
 });

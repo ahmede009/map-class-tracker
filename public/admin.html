@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Control Center | MAP Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,51 +13,36 @@
             --bg: #f8fafc; 
             --text-main: #0f172a; 
             --text-muted: #64748b;
-            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+            --card-shadow: 0 4px 6px -4px rgba(0, 0, 0, 0.1);
         }
         
-        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 40px 20px; color: var(--text-main); }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--text-main); }
+        .header-title { text-align: center; font-size: 2rem; color: var(--ais-blue); margin-bottom: 20px; font-weight: 800; letter-spacing: -1px; }
         
-        .header-title { text-align: center; font-size: 2.5rem; font-weight: 800; color: var(--ais-blue); margin-bottom: 40px; letter-spacing: -1px; }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 1000px; margin: auto; }
+        @media (min-width: 768px) { .grid { grid-template-columns: 1fr 1fr; } }
         
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; margin: auto; }
+        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        h2 { margin-top: 0; font-size: 1.2rem; font-weight: 700; color: var(--text-main); border-bottom: 3px solid var(--ais-yellow); padding-bottom: 8px; display: inline-block; margin-bottom: 20px; }
         
-        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
-        
-        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: var(--card-shadow); border: 1px solid #f1f5f9; }
-        
-        h2 { margin-top: 0; font-size: 1.2rem; font-weight: 700; color: var(--text-main); border-bottom: 3px solid var(--ais-yellow); padding-bottom: 12px; margin-bottom: 24px; display: inline-block; }
-        
-        .class-row { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 16px; background: #ffffff; border: 1px solid #e2e8f0; 
-            border-radius: 12px; margin-bottom: 12px; transition: 0.2s ease;
-        }
+        .class-row { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 12px; transition: 0.2s ease; }
         .class-row:hover { border-color: #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .class-row strong { font-size: 1.1rem; }
         
-        .btn-group { display: flex; gap: 10px; }
+        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
         
-        button { 
-            background: #f1f5f9; color: var(--text-main); border: none; 
-            padding: 8px 16px; border-radius: 8px; cursor: pointer; 
-            font-weight: 600; font-size: 0.85rem; font-family: 'Inter';
-            transition: all 0.2s ease;
-        }
+        button { background: #f1f5f9; color: var(--text-main); border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; font-family: 'Inter'; transition: all 0.2s ease; }
         button:hover { background: #e2e8f0; transform: translateY(-1px); }
         
-        .btn-qr { background: var(--ais-blue); color: white; }
-        .btn-qr:hover { background: #003d73; }
+        .btn-qr, .btn-primary { background: var(--ais-blue); color: white; }
+        .btn-qr:hover, .btn-primary:hover { background: #003d73; }
         
-        .rank-row { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px; margin-bottom: 12px; background: #ffffff; 
-            border: 1px solid #e2e8f0; border-radius: 12px; 
-            position: relative; overflow: hidden;
-        }
+        .upload-zone { border: 2px dashed #cbd5e1; padding: 25px; text-align: center; border-radius: 12px; background: #f8fafc; transition: 0.2s; }
+        .upload-zone:hover { border-color: var(--ais-blue); background: #f1f5f9; }
+        .upload-zone input { margin-top: 15px; margin-bottom: 15px; font-family: 'Inter'; }
         
+        .rank-row { display: flex; justify-content: space-between; align-items: center; padding: 14px; margin-bottom: 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; position: relative; overflow: hidden; }
         .rank-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--ais-yellow); }
-        
         .rank-number { font-weight: 800; color: var(--text-muted); width: 30px; }
         .rank-class { font-weight: 700; flex: 1; }
         .rank-score { font-weight: 800; color: var(--ais-blue); background: #f1f5f9; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; }
@@ -68,13 +54,25 @@
 </head>
 <body>
     <h1 class="header-title">Admin Control Center</h1>
+    <div class="grid" style="max-width: 1000px; margin: 0 auto 20px auto; grid-template-columns: 1fr;">
+        <div class="card">
+            <h2>Import MAP Scores (CSV)</h2>
+            <p style="font-size: 0.95rem; color: #64748b; margin-top: -10px; margin-bottom: 20px;">Required Headers: <strong>ClassID, Grade, Subject, Term, RITScore</strong></p>
+            <div class="upload-zone">
+                <input type="file" id="csvFile" accept=".csv" />
+                <br>
+                <button class="btn-primary" onclick="handleCSVUpload()">Upload Database</button>
+            </div>
+        </div>
+    </div>
+    
     <div class="grid">
         <div class="card">
             <h2>Secure Class Links</h2>
-            <div id="linksContainer">Loading assets...</div>
+            <div id="linksContainer">Authenticating and loading...</div>
         </div>
         <div class="card">
-            <h2>School Leaderboard (Latest Math RIT)</h2>
+            <h2>School Leaderboard (Math)</h2>
             <div id="leaderboardContainer">Calculating rankings...</div>
         </div>
     </div>
@@ -83,6 +81,7 @@
         async function initAdmin() {
             try {
                 const res = await fetch('/api/admin/data');
+                if (!res.ok) throw new Error('Auth failed');
                 const classes = await res.json();
                 
                 let linksHtml = '';
@@ -92,17 +91,16 @@
                         <div class="class-row">
                             <strong>${c.classId}</strong>
                             <div class="btn-group">
-                                <button onclick="navigator.clipboard.writeText('${url}'); alert('Link copied to clipboard!')">Copy Link</button>
-                                <button class="btn-qr" onclick="downloadQR('${url}', '${c.classId}')">Download QR</button>
+                                <button onclick="navigator.clipboard.writeText('${url}'); alert('Link copied!')">Copy</button>
+                                <button class="btn-qr" onclick="downloadQR('${url}', '${c.classId}')">QR</button>
                             </div>
                         </div>`;
                 });
-                document.getElementById('linksContainer').innerHTML = linksHtml;
+                document.getElementById('linksContainer').innerHTML = linksHtml || 'No classes found in database.';
 
                 const mathRankings = classes.map(c => {
                     const mathSub = c.subjects.find(s => s.name === 'Math');
-                    const latestScore = mathSub && mathSub.mapScores.length > 0 
-                        ? mathSub.mapScores[mathSub.mapScores.length - 1].ritScore : 0;
+                    const latestScore = mathSub && mathSub.mapScores.length > 0 ? mathSub.mapScores[mathSub.mapScores.length - 1].ritScore : 0;
                     return { id: c.classId, score: latestScore };
                 }).sort((a, b) => b.score - a.score);
 
@@ -120,26 +118,68 @@
                             <div class="rank-score">${r.score} RIT</div>
                         </div>`;
                 });
-                document.getElementById('leaderboardContainer').innerHTML = rankHtml;
+                document.getElementById('leaderboardContainer').innerHTML = rankHtml || 'No data available.';
             } catch (err) {
-                document.getElementById('linksContainer').innerHTML = '<span style="color:red; font-weight:600;">Failed to establish secure connection.</span>';
+                document.getElementById('linksContainer').innerHTML = '<span style="color:red; font-weight:600;">Authentication Error / Server Offline</span>';
             }
         }
 
         async function downloadQR(url, classId) {
             try {
-                const dataUrl = await QRCode.toDataURL(url, { 
-                    width: 500,
-                    margin: 2,
-                    color: { dark: '#0f172a', light: '#ffffff' }
-                });
+                const dataUrl = await QRCode.toDataURL(url, { width: 500, margin: 2, color: { dark: '#0f172a', light: '#ffffff' } });
                 const link = document.createElement('a');
-                link.download = `Class_${classId}_QR_Code.png`;
-                link.href = dataUrl;
+                link.download = `Class_${classId}_QR_Code.png`; 
+                link.href = dataUrl; 
                 link.click();
             } catch (err) {
                 alert('Failed to generate QR code asset.');
             }
+        }
+
+        function handleCSVUpload() {
+            const file = document.getElementById('csvFile').files[0];
+            if (!file) return alert('Select a CSV file first.');
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const lines = e.target.result.split('\n').filter(l => l.trim().length > 0);
+                const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                
+                const data = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',');
+                    if (values.length !== headers.length) continue;
+                    
+                    const row = {};
+                    headers.forEach((h, index) => row[h] = values[index].trim());
+                    
+                    data.push({
+                        classId: row.classid,
+                        grade: parseInt(row.grade),
+                        subject: row.subject,
+                        term: row.term,
+                        ritScore: parseInt(row.ritscore)
+                    });
+                }
+                
+                try {
+                    const res = await fetch('/api/admin/import', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    if (res.ok) {
+                        alert('Scores updated successfully!');
+                        initAdmin(); // Refresh data
+                    } else {
+                        alert('Upload failed. Check server logs.');
+                    }
+                } catch(err) {
+                    alert('Network error during upload.');
+                }
+            };
+            reader.readAsText(file);
         }
 
         initAdmin();
