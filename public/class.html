@@ -18,15 +18,10 @@
         
         body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; color: var(--text-main); -webkit-font-smoothing: antialiased; }
         
-        /* Responsive Flexbox Header */
         .header { background: linear-gradient(135deg, #003d73 0%, var(--ais-blue) 100%); color: white; padding: 1.5rem 1rem; border-bottom: 4px solid var(--ais-yellow); }
-        
         .header-content { display: flex; flex-direction: column; align-items: center; gap: 15px; max-width: 1000px; margin: 0 auto; position: relative; }
-        
         .header-logo { height: 50px; object-fit: contain; }
-        
         .header h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; text-align: center; line-height: 1.2; z-index: 2; }
-        
         .print-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; white-space: nowrap; }
         .print-btn:hover { background: white; color: var(--ais-blue); }
 
@@ -62,16 +57,17 @@
         .negative { color: #991b1b; }
         .neutral { color: var(--text-muted); font-size: 1.5rem; }
 
-        /* Desktop Layout Snap */
+        .chart-wrapper { position: relative; height: 300px; width: 100%; }
+
         @media (min-width: 768px) {
             .header-content { flex-direction: row; justify-content: space-between; }
             .header h1 { position: absolute; left: 50%; transform: translateX(-50%); font-size: 2.2rem; width: 100%; pointer-events: none; }
             .header-logo { height: 60px; }
             .container { margin-top: -20px; padding: 0 20px; }
             .card { padding: 30px; }
+            .chart-wrapper { height: 400px; }
         }
 
-        /* Print Optimization */
         @media print {
             body { background: white; color: black; }
             .header { background: none; color: black; border-bottom: 2px solid black; padding: 10px 0; margin-bottom: 20px; }
@@ -80,7 +76,7 @@
             .print-btn, .tabs-container, .term-tabs { display: none !important; }
             .container { margin: 0; padding: 0; max-width: 100%; }
             .card, .stat-box { border: 1px solid #ccc; box-shadow: none; break-inside: avoid; }
-            canvas { max-width: 100% !important; height: auto !important; }
+            .chart-wrapper { height: 300px !important; }
         }
     </style>
 </head>
@@ -207,7 +203,13 @@
 
             document.getElementById('content').innerHTML = `
                 <div class="stats-grid">${statsHtml}</div>
-                ${showChart ? `<div class="card"><h3 style="margin-top:0; color:var(--text-main); font-weight:700;">Performance Trajectory</h3><canvas id="mapChart"></canvas></div>` : ''}
+                ${showChart ? `
+                <div class="card">
+                    <h3 style="margin-top:0; color:var(--text-main); font-weight:700;">Performance Trajectory</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="mapChart"></canvas>
+                    </div>
+                </div>` : ''}
             `;
 
             if (chartInstance) chartInstance.destroy();
@@ -230,8 +232,6 @@
                         scales: { y: { grid: { borderDash: [4, 4] }, suggestedMin: 180, suggestedMax: 260 }, x: { grid: { display: false } } }
                     }
                 });
-                // Ensure chart has physical height on mobile
-                document.getElementById('mapChart').style.height = '300px';
             }
         }
         init();
