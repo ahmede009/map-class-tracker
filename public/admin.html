@@ -7,51 +7,44 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --ais-blue: #00529b; 
-            --ais-yellow: #ffc72c; 
-            --bg: #f8fafc; 
-            --text-main: #0f172a; 
-            --text-muted: #64748b;
-            --card-shadow: 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-        }
-        
+        :root { --ais-blue: #00529b; --ais-yellow: #ffc72c; --bg: #f8fafc; --text-main: #0f172a; --text-muted: #64748b; --card-shadow: 0 4px 6px -4px rgba(0, 0, 0, 0.1); }
         body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 20px 15px; color: var(--text-main); }
         
-        /* Responsive Flexbox Header */
         .header-wrapper { display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 1000px; margin: 0 auto 30px auto; position: relative; }
         .header-logo { height: 50px; object-fit: contain; }
-        .header-title { text-align: center; font-size: 1.8rem; color: var(--ais-blue); margin: 0; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
+        .header-title { text-align: center; font-size: 1.8rem; color: var(--ais-blue); margin: 0; font-weight: 800; letter-spacing: -0.5px; }
         
         .grid { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 1000px; margin: auto; }
-        
         .card { background: white; padding: 20px; border-radius: 16px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0; margin-bottom: 20px; }
-        h2 { margin-top: 0; font-size: 1.2rem; font-weight: 700; color: var(--text-main); border-bottom: 3px solid var(--ais-yellow); padding-bottom: 8px; display: inline-block; margin-bottom: 15px; }
         
-        /* Mobile-First Rows */
-        .class-row { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 12px; transition: 0.2s ease; }
+        h2 { margin-top: 0; font-size: 1.2rem; font-weight: 700; border-bottom: 3px solid var(--ais-yellow); padding-bottom: 8px; display: inline-block; margin-bottom: 15px; }
+        .header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        
+        select { padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Inter'; font-weight: 600; outline: none; }
+        
+        .tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; background: #f8fafc; padding: 6px; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .tab-btn { background: transparent; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; color: var(--text-muted); transition: 0.2s; white-space: nowrap; }
+        .tab-btn.active { background: var(--ais-blue); color: white; }
+
+        .class-row { display: flex; flex-direction: column; gap: 12px; padding: 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 12px; }
         .class-row strong { font-size: 1.1rem; }
-        
         .btn-group { display: flex; gap: 8px; flex-wrap: wrap; width: 100%; }
-        
-        button { background: #f1f5f9; color: var(--text-main); border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; font-family: 'Inter'; transition: all 0.2s ease; flex: 1; text-align: center; }
-        
+        button { background: #f1f5f9; color: var(--text-main); border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; font-family: 'Inter'; flex: 1; }
         .btn-qr, .btn-primary { background: var(--ais-blue); color: white; }
-        
+        .btn-export { background: #10b981; color: white; }
+
         .upload-zone { border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 12px; background: #f8fafc; }
-        .upload-zone input { margin: 15px 0; font-family: 'Inter'; max-width: 100%; }
+        .upload-zone input { margin: 15px 0; max-width: 100%; }
         
         .rank-row { display: flex; align-items: center; padding: 14px; margin-bottom: 12px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; position: relative; overflow: hidden; }
         .rank-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--ais-yellow); }
         .rank-number { font-weight: 800; color: var(--text-muted); width: 35px; }
         .rank-class { font-weight: 700; flex: 1; }
-        .rank-score { font-weight: 800; color: var(--ais-blue); background: #f1f5f9; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; }
-        
+        .rank-score { font-weight: 800; color: var(--ais-blue); background: #f1f5f9; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; }
         .gold-medal::before { background: #fbbf24; }
         .silver-medal::before { background: #94a3b8; }
         .bronze-medal::before { background: #b45309; }
 
-        /* Desktop Layout Snap */
         @media (min-width: 768px) {
             body { padding: 40px 20px; }
             .header-wrapper { flex-direction: row; justify-content: center; }
@@ -62,7 +55,6 @@
             .btn-group { width: auto; }
             button { flex: none; padding: 8px 14px; }
             .card { padding: 25px; }
-            .rank-score { padding: 4px 12px; font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -74,8 +66,11 @@
     
     <div class="grid" style="max-width: 1000px; margin: 0 auto 20px auto; grid-template-columns: 1fr;">
         <div class="card">
-            <h2>Import MAP Scores (CSV)</h2>
-            <p style="font-size: 0.9rem; color: #64748b; margin-top: -10px; margin-bottom: 20px;">Required: <strong>ClassID, Grade, Subject, Term, RITScore</strong></p>
+            <div class="header-controls">
+                <h2>Database Management</h2>
+                <button class="btn-export" onclick="exportCSV()">Download DB (CSV)</button>
+            </div>
+            <p style="font-size: 0.9rem; color: #64748b; margin-top: -10px;">Import Format: <strong>ClassID, Grade, Subject, Term, RITScore</strong></p>
             <div class="upload-zone">
                 <input type="file" id="csvFile" accept=".csv" />
                 <br>
@@ -87,115 +82,133 @@
     <div class="grid">
         <div class="card">
             <h2>Secure Class Links</h2>
-            <div id="linksContainer">Authenticating and loading...</div>
+            <div id="linksContainer">Authenticating...</div>
         </div>
         <div class="card">
-            <h2>School Leaderboard (Math)</h2>
+            <div class="header-controls">
+                <h2>Leaderboard</h2>
+                <select id="gradeFilter" onchange="renderLeaderboard()">
+                    <option value="all">All Grades</option>
+                    <option value="10">Grade 10</option>
+                </select>
+            </div>
+            <div class="tabs" style="margin-bottom: 15px;">
+                <button class="tab-btn active" onclick="setLeaderboardSubject('Math', this)">Math</button>
+                <button class="tab-btn" onclick="setLeaderboardSubject('Reading', this)">Reading</button>
+                <button class="tab-btn" onclick="setLeaderboardSubject('Language', this)">Language</button>
+                <button class="tab-btn" onclick="setLeaderboardSubject('Science', this)">Science</button>
+            </div>
             <div id="leaderboardContainer">Calculating rankings...</div>
         </div>
     </div>
 
     <script>
+        let allClassData = [];
+        let currentLbSubject = 'Math';
+
         async function initAdmin() {
             try {
                 const res = await fetch('/api/admin/data');
                 if (!res.ok) throw new Error('Auth failed');
-                const classes = await res.json();
+                allClassData = await res.json();
                 
                 let linksHtml = '';
-                classes.forEach(c => {
+                allClassData.forEach(c => {
                     const url = `${window.location.origin}/class.html?id=${c.uuid}`;
-                    linksHtml += `
-                        <div class="class-row">
-                            <strong>${c.classId}</strong>
-                            <div class="btn-group">
-                                <button onclick="navigator.clipboard.writeText('${url}'); alert('Link copied!')">Copy</button>
-                                <button class="btn-qr" onclick="downloadQR('${url}', '${c.classId}')">QR</button>
-                            </div>
-                        </div>`;
+                    linksHtml += `<div class="class-row">
+                        <strong>${c.classId} (Gr. ${c.gradeLevel})</strong>
+                        <div class="btn-group">
+                            <button onclick="navigator.clipboard.writeText('${url}'); alert('Copied!')">Copy</button>
+                            <button class="btn-qr" onclick="downloadQR('${url}', '${c.classId}')">QR</button>
+                        </div>
+                    </div>`;
                 });
-                document.getElementById('linksContainer').innerHTML = linksHtml || 'No classes found in database.';
-
-                const mathRankings = classes.map(c => {
-                    const mathSub = c.subjects.find(s => s.name === 'Math');
-                    const latestScore = mathSub && mathSub.mapScores.length > 0 ? mathSub.mapScores[mathSub.mapScores.length - 1].ritScore : 0;
-                    return { id: c.classId, score: latestScore };
-                }).sort((a, b) => b.score - a.score);
-
-                let rankHtml = '';
-                mathRankings.forEach((r, i) => {
-                    let medalClass = '';
-                    if (i === 0) medalClass = 'gold-medal';
-                    else if (i === 1) medalClass = 'silver-medal';
-                    else if (i === 2) medalClass = 'bronze-medal';
-                    
-                    rankHtml += `
-                        <div class="rank-row ${medalClass}">
-                            <div class="rank-number">#${i + 1}</div>
-                            <div class="rank-class">Class ${r.id}</div>
-                            <div class="rank-score">${r.score} RIT</div>
-                        </div>`;
-                });
-                document.getElementById('leaderboardContainer').innerHTML = rankHtml || 'No data available.';
+                document.getElementById('linksContainer').innerHTML = linksHtml || 'No classes found.';
+                
+                renderLeaderboard();
             } catch (err) {
                 document.getElementById('linksContainer').innerHTML = '<span style="color:red; font-weight:600;">Authentication Error / Server Offline</span>';
             }
         }
 
+        function setLeaderboardSubject(subject, btnElement) {
+            currentLbSubject = subject;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderLeaderboard();
+        }
+
+        function renderLeaderboard() {
+            const gradeFilter = document.getElementById('gradeFilter').value;
+            
+            const filteredClasses = allClassData.filter(c => gradeFilter === 'all' || c.gradeLevel == gradeFilter);
+            
+            const rankings = filteredClasses.map(c => {
+                const sub = c.subjects.find(s => s.name === currentLbSubject);
+                const latestScore = sub && sub.mapScores.length > 0 ? sub.mapScores[sub.mapScores.length - 1].ritScore : 0;
+                return { id: c.classId, score: latestScore };
+            }).filter(r => r.score > 0).sort((a, b) => b.score - a.score);
+
+            let rankHtml = '';
+            rankings.forEach((r, i) => {
+                let medalClass = '';
+                if (i === 0) medalClass = 'gold-medal';
+                else if (i === 1) medalClass = 'silver-medal';
+                else if (i === 2) medalClass = 'bronze-medal';
+                
+                rankHtml += `<div class="rank-row ${medalClass}">
+                    <div class="rank-number">#${i + 1}</div>
+                    <div class="rank-class">Class ${r.id}</div>
+                    <div class="rank-score">${r.score} RIT</div>
+                </div>`;
+            });
+            document.getElementById('leaderboardContainer').innerHTML = rankHtml || '<div style="padding: 10px; color: #64748b;">No data available for this subject/grade.</div>';
+        }
+
+        function exportCSV() {
+            let csvContent = "ClassID,Grade,Subject,Term,RITScore,NationalNorm\n";
+            allClassData.forEach(c => {
+                c.subjects.forEach(sub => {
+                    sub.mapScores.forEach(score => {
+                        csvContent += `${c.classId},${c.gradeLevel},${sub.name},${score.term},${score.ritScore},${score.nationalNorm}\n`;
+                    });
+                });
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "MAP_Scores_Export.csv";
+            link.click();
+        }
+
         async function downloadQR(url, classId) {
             try {
                 const dataUrl = await QRCode.toDataURL(url, { width: 500, margin: 2, color: { dark: '#0f172a', light: '#ffffff' } });
-                const link = document.createElement('a');
-                link.download = `Class_${classId}_QR_Code.png`; 
-                link.href = dataUrl; 
-                link.click();
-            } catch (err) {
-                alert('Failed to generate QR code asset.');
-            }
+                const link = document.createElement('a'); link.download = `Class_${classId}_QR.png`; link.href = dataUrl; link.click();
+            } catch (err) { alert('Failed to generate QR code asset.'); }
         }
 
         function handleCSVUpload() {
             const file = document.getElementById('csvFile').files[0];
             if (!file) return alert('Select a CSV file first.');
-            
             const reader = new FileReader();
             reader.onload = async function(e) {
                 const lines = e.target.result.split('\n').filter(l => l.trim().length > 0);
                 const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-                
                 const data = [];
                 for (let i = 1; i < lines.length; i++) {
                     const values = lines[i].split(',');
                     if (values.length !== headers.length) continue;
-                    
                     const row = {};
                     headers.forEach((h, index) => row[h] = values[index].trim());
-                    
-                    data.push({
-                        classId: row.classid,
-                        grade: parseInt(row.grade),
-                        subject: row.subject,
-                        term: row.term,
-                        ritScore: parseInt(row.ritscore)
-                    });
+                    data.push({ classId: row.classid, grade: parseInt(row.grade), subject: row.subject, term: row.term, ritScore: parseInt(row.ritscore) });
                 }
-                
                 try {
-                    const res = await fetch('/api/admin/import', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-                    
-                    if (res.ok) {
-                        alert('Scores updated successfully!');
-                        initAdmin(); 
-                    } else {
-                        alert('Upload failed. Check server logs.');
-                    }
-                } catch(err) {
-                    alert('Network error during upload.');
-                }
+                    const res = await fetch('/api/admin/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                    if (res.ok) { alert('Scores updated successfully!'); initAdmin(); } 
+                    else alert('Upload failed. Check server logs.');
+                } catch(err) { alert('Network error during upload.'); }
             };
             reader.readAsText(file);
         }

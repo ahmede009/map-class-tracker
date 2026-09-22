@@ -14,7 +14,6 @@ const protectRoute = (req, res, next) => {
     const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
     const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
     
-    // Default credentials for the admin dashboard
     const validUser = process.env.ADMIN_USER || 'admin';
     const validPass = process.env.ADMIN_PASS || 'AISadmin2026';
 
@@ -25,7 +24,6 @@ const protectRoute = (req, res, next) => {
     res.status(401).send('Authentication required.');
 };
 
-// Protect the Admin Dashboard & Admin API before loading the static files
 app.use('/admin.html', protectRoute);
 app.use('/api/admin', protectRoute);
 
@@ -45,6 +43,11 @@ const TARGET_NORMS = {
     }
 };
 
+// Expose Norms for Frontend Projections
+app.get('/api/norms', (req, res) => {
+    res.json(TARGET_NORMS);
+});
+
 // Secure fetch for Student View
 app.get('/api/classes/:uuid', async (req, res) => {
     try {
@@ -59,7 +62,7 @@ app.get('/api/classes/:uuid', async (req, res) => {
 // Admin Data Fetch
 app.get('/api/admin/data', async (req, res) => {
     try {
-        const classes = await ClassData.find({}, 'classId uuid subjects');
+        const classes = await ClassData.find({}, 'classId gradeLevel uuid subjects');
         res.json(classes);
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
@@ -72,23 +75,19 @@ app.post('/api/admin/import', async (req, res) => {
         const parsedData = req.body; 
         
         for (const row of parsedData) {
-            // Automatically look up the correct norm target based on grade, subject, and term
             const norm = TARGET_NORMS[row.grade]?.[row.subject]?.[row.term] || 0; 
             
-            // Upsert Logic: Find class or create new
             let classDoc = await ClassData.findOne({ classId: row.classId });
             if (!classDoc) {
                 classDoc = new ClassData({ classId: row.classId, gradeLevel: row.grade, subjects: [] });
             }
 
-            // Find subject or create new
             let subjectDoc = classDoc.subjects.find(s => s.name === row.subject);
             if (!subjectDoc) {
                 classDoc.subjects.push({ name: row.subject, mapScores: [] });
                 subjectDoc = classDoc.subjects[classDoc.subjects.length - 1];
             }
 
-            // Find term score or create new
             let scoreDoc = subjectDoc.mapScores.find(s => s.term === row.term);
             if (scoreDoc) {
                 scoreDoc.ritScore = row.ritScore;
