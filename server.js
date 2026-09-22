@@ -70,6 +70,7 @@ app.get('/api/admin/data', async (req, res) => {
 });
 
 // CSV Upload Processor
+// CSV Upload Processor
 app.post('/api/admin/import', async (req, res) => {
     try {
         const parsedData = req.body; 
@@ -79,7 +80,11 @@ app.post('/api/admin/import', async (req, res) => {
             
             let classDoc = await ClassData.findOne({ classId: row.classId });
             if (!classDoc) {
+                // If the class is brand new, create it with the grade
                 classDoc = new ClassData({ classId: row.classId, gradeLevel: row.grade, subjects: [] });
+            } else {
+                // FIX: If the class already exists from an old import, force-update the missing grade
+                classDoc.gradeLevel = row.grade;
             }
 
             let subjectDoc = classDoc.subjects.find(s => s.name === row.subject);
@@ -104,6 +109,7 @@ app.post('/api/admin/import', async (req, res) => {
         res.status(500).json({ error: 'Import failed' });
     }
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
