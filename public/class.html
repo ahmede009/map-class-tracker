@@ -58,6 +58,7 @@
 
         @media print {
             body { background: white; color: black; }
+            .header-logo { left: 0; top: 0; transform: none; height: 45px; }
             .header { background: none; color: black; border-bottom: 2px solid black; padding: 0; margin-bottom: 20px; box-shadow: none; }
             .header h1 { color: black; padding-bottom: 10px; }
             .print-btn, .tabs-container, .term-tabs { display: none !important; }
@@ -66,10 +67,12 @@
             .stat-value { color: black; }
             canvas { max-width: 100% !important; height: auto !important; }
         }
+        .header-logo { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); height: 60px; z-index: 10; }
     </style>
 </head>
 <body>
     <div class="header">
+        <img src="/logo.png" alt="School Logo" class="header-logo">
         <button class="print-btn" onclick="window.print()">🖨 Print Report</button>
         <h1 id="className">Loading...</h1>
     </div>

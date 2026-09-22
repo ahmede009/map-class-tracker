@@ -50,10 +50,15 @@
         .gold-medal::before { background: #fbbf24; }
         .silver-medal::before { background: #94a3b8; }
         .bronze-medal::before { background: #b45309; }
+        .header-wrapper { position: relative; max-width: 1000px; margin: 0 auto 30px auto; padding-top: 10px; text-align: center; }
+        .header-logo { position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 55px; }
     </style>
 </head>
 <body>
-    <h1 class="header-title">Admin Control Center</h1>
+    <div class="header-wrapper">
+        <img src="/logo.png" alt="School Logo" class="header-logo">
+        <h1 class="header-title" style="margin-bottom: 0;">Admin Control Center</h1>
+    </div>
     <div class="grid" style="max-width: 1000px; margin: 0 auto 20px auto; grid-template-columns: 1fr;">
         <div class="card">
             <h2>Import MAP Scores (CSV)</h2>
